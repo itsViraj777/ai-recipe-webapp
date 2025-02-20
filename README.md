@@ -36,3 +36,9 @@ To run this project locally, follow these steps:
    git clone https://github.com/your-username/recipe-genie.git
 2. npm insall vite
 3. npm run dev
+   
+## Set up environment variables:
+
+Create a .env file in the server directory and add your Gemini API key:
+
+GEMINI_API_KEY=your_api_key_here
