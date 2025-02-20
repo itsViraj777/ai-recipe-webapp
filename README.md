@@ -24,7 +24,14 @@ RecipeGenie is an intelligent recipe app powered by the **Gemini API**, designed
 - **React.js**: Front-end framework for building a responsive and user-friendly interface.
 - **Node.js & Express**: Back-end server for handling API requests and user data.
 
+## Screenshots 📸
+![image](https://github.com/user-attachments/assets/1655fbd6-774d-4b1e-a5d6-8cffa9d85924)
 
+Personalized recipe recommendations based on user preferences.
+
+![image](https://github.com/user-attachments/assets/ca53e4d3-7e02-4da4-a372-04af2422fe45)
+
+Step-by-step cooking guidance with real-time tips.
 ---
 
 ## Installation 🚀
