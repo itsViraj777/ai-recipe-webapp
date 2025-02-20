@@ -1,6 +1,6 @@
-# RecipeGenie - AI-Powered Recipe App 🍳
+# Delicious recipe  - AI-Powered Recipe App 🍳
 
-RecipeGenie is an intelligent recipe app powered by the **Gemini API**, designed to make cooking easier, personalized, and more enjoyable. Whether you're a seasoned chef or a beginner in the kitchen, RecipeGenie offers smart recipe suggestions, step-by-step cooking guidance, and detailed nutritional insights to help you create delicious meals effortlessly.
+Delicious recipe is an intelligent recipe app powered by the **Gemini API**, designed to make cooking easier, personalized, and more enjoyable. Whether you're a seasoned chef or a beginner in the kitchen, Delicious recipe offers smart recipe suggestions, step-by-step cooking guidance, and detailed nutritional insights to help you create delicious meals effortlessly.
 
 ---
 
@@ -29,7 +29,8 @@ RecipeGenie is an intelligent recipe app powered by the **Gemini API**, designed
 
 Personalized recipe recommendations based on user preferences.
 
-![image](https://github.com/user-attachments/assets/ca53e4d3-7e02-4da4-a372-04af2422fe45)
+![image](https://github.com/user-attachments/assets/ed6ee63c-44d9-4ef0-a827-64eb3dddb997)
+
 
 Step-by-step cooking guidance with real-time tips.
 ---
