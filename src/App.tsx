@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Utensils, ChefHat, Send } from 'lucide-react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
-// Initialize Gemini API
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+// Initialize GoogleGenAI with the API key
+const genAI = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 interface Recipe {
   name: string;
@@ -39,7 +39,6 @@ function App() {
     try {
       setLoading(true);
       setError(null);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
       
       const prompt = `Generate exactly 3 unique recipes using some or all of these ingredients: ${ingredients}.
       For each recipe, provide:
@@ -67,19 +66,32 @@ function App() {
         }
       ]`;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const response = await genAI.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: prompt,
+      });
+      const text = response.text;
+      console.log('Raw API Response:', text);
       
-      try {
-        const newRecipes = JSON.parse(text);
+      if (typeof text === 'string') {
+        console.log('API Response:', text);
+        let cleanText = text.trim();
+
+        // Remove ```json ... ```
+        if (cleanText.startsWith('```')) {
+          cleanText = cleanText.replace(/^```(?:json)?/, '').replace(/```$/, '').trim();
+        }
+
+        const newRecipes = JSON.parse(cleanText);
+        console.log('Parsed Recipes:', newRecipes);
         if (Array.isArray(newRecipes) && newRecipes.length > 0) {
           setRecipes(newRecipes);
         } else {
+          console.error('Invalid recipe format received:', newRecipes);
           throw new Error('Invalid recipe format received');
         }
-      } catch (parseError) {
-        console.error('Failed to parse recipes:', parseError);
+      } else {
+        console.error('Response text is undefined');
         setError('Failed to generate recipes. Please try again.');
       }
     } catch (error) {
