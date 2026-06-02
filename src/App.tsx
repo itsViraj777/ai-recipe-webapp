@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Utensils, ChefHat, Send } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
 
-// Initialize GoogleGenAI with the API key
-const genAI = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL = import.meta.env.VITE_GROQ_MODEL || 'llama-3.1-8b-instant';
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
 interface Recipe {
   name: string;
@@ -18,9 +18,7 @@ const foodItems = [
 ];
 
 function App() {
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [ingredients, setIngredients] = useState<string>('');
-  const [ing, setIng] = useState<string>('');
   const [blankField, setBlankField] = useState<string>('');
   const [selectedIngredients, setSelectedIngredients] = useState<Set<string>>(new Set());
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -30,7 +28,6 @@ function App() {
   const handleIngredientClick = (item: string) => {
     if (!selectedIngredients.has(item)) {
       setSelectedIngredients(prev => new Set(prev).add(item));
-      setSelectedItem(item);
       setIngredients(prev => prev ? `${prev} ${item}` : item);
     }
   };
@@ -39,6 +36,10 @@ function App() {
     try {
       setLoading(true);
       setError(null);
+
+      if (!GROQ_API_KEY) {
+        throw new Error('Missing Groq API key');
+      }
       
       const prompt = `Generate exactly 3 unique recipes using some or all of these ingredients: ${ingredients}.
       For each recipe, provide:
@@ -57,20 +58,49 @@ function App() {
       )
       3. Exactly 5 steps for preparation (each step should be clear and concise)
       
-      Return ONLY a valid JSON array with exactly this structure:
-      [
-        {
-          "name": "Recipe Name",
-          "image": "https://images.unsplash.com/photo-XXXXX",
-          "steps": ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5"]
-        }
-      ]`;
+      Return ONLY a valid JSON object with exactly this structure:
+      {
+        "recipes": [
+          {
+            "name": "Recipe Name",
+            "image": "https://images.unsplash.com/photo-XXXXX",
+            "steps": ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5"]
+          }
+        ]
+      }`;
 
-      const response = await genAI.models.generateContent({
-        model: 'gemini-2.0-flash',
-        contents: prompt,
+      const response = await fetch(GROQ_API_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a recipe generator that returns only valid JSON.',
+            },
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ],
+          temperature: 0.8,
+          max_completion_tokens: 1200,
+          response_format: { type: 'json_object' },
+        }),
       });
-      const text = response.text;
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error('Groq API Error:', response.status, errorBody);
+        throw new Error('Groq API request failed');
+      }
+
+      const data = await response.json();
+      const text = data.choices?.[0]?.message?.content;
       console.log('Raw API Response:', text);
       
       if (typeof text === 'string') {
@@ -81,8 +111,11 @@ function App() {
         if (cleanText.startsWith('```')) {
           cleanText = cleanText.replace(/^```(?:json)?/, '').replace(/```$/, '').trim();
         }
+        const parsedResponse = JSON.parse(cleanText);
+        const newRecipes = Array.isArray(parsedResponse)
+          ? parsedResponse
+          : parsedResponse.recipes;
 
-        const newRecipes = JSON.parse(cleanText);
         console.log('Parsed Recipes:', newRecipes);
         if (Array.isArray(newRecipes) && newRecipes.length > 0) {
           setRecipes(newRecipes);
@@ -107,11 +140,9 @@ function App() {
       setError('Please select at least one ingredient');
       return;
     }
-    setIng(ingredients);
     setBlankField(ingredients);
     await generateRecipes(ingredients);
     setIngredients('');
-    setSelectedItem(null);
     setSelectedIngredients(new Set());
   };
 

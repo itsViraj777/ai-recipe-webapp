@@ -1,6 +1,6 @@
 # Delicious recipe  - AI-Powered Recipe App 🍳
 
-Delicious recipe is an intelligent recipe app powered by the **Gemini API**, designed to make cooking easier, personalized, and more enjoyable. Whether you're a seasoned chef or a beginner in the kitchen, Delicious recipe offers smart recipe suggestions, step-by-step cooking guidance, and detailed nutritional insights to help you create delicious meals effortlessly.
+Delicious recipe is an intelligent recipe app powered by the **Groq API**, designed to make cooking easier, personalized, and more enjoyable. Whether you're a seasoned chef or a beginner in the kitchen, Delicious recipe offers smart recipe suggestions, step-by-step cooking guidance, and detailed nutritional insights to help you create delicious meals effortlessly.
 
 ---
 
@@ -12,7 +12,7 @@ Delicious recipe is an intelligent recipe app powered by the **Gemini API**, des
 
 ## How It Works 🛠️
 
-1. **Personalized Recommendations**: Enter your dietary preferences, available ingredients, and cooking goals. The app uses the **Gemini API** to generate tailored recipe suggestions.
+1. **Personalized Recommendations**: Enter your dietary preferences, available ingredients, and cooking goals. The app uses the **Groq API** to generate tailored recipe suggestions.
 2. **Step-by-Step Guidance**: Follow interactive cooking instructions with voice or text-based assistance.
 
 
@@ -20,7 +20,7 @@ Delicious recipe is an intelligent recipe app powered by the **Gemini API**, des
 
 ## Technologies Used 💻
 
-- **Gemini API**: Powers the AI-driven recipe suggestions, cooking assistance, and nutritional insights.
+- **Groq API**: Powers the AI-driven recipe suggestions, cooking assistance, and nutritional insights.
 - **React.js**: Front-end framework for building a responsive and user-friendly interface.
 - **Node.js & Express**: Back-end server for handling API requests and user data.
 
@@ -47,6 +47,9 @@ To run this project locally, follow these steps:
    
 ## Set up environment variables:
 
-Create a .env file in the server directory and add your Gemini API key:
+Create a `.env.local` file in the project root and add your Groq API key:
 
-GEMINI_API_KEY=your_api_key_here
+```bash
+VITE_GROQ_API_KEY=your_groq_api_key_here
+VITE_GROQ_MODEL=llama-3.1-8b-instant
+```
